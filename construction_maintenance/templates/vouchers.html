@@ -105,7 +105,7 @@
   </form>
 
   <div class="table-container ledger-table-wrap">
-    <table class="premium-table ledger-table">
+    <table class="premium-table ledger-table" data-mobile-records="global">
       <colgroup>
         <col class="col-date">
         <col class="col-project">
@@ -155,6 +155,7 @@
             </div>
           </td>
           <td class="text-center ledger-row-actions sticky-col-right">
+            {% include '_ledger_mobile_details.html' %}
             <div class="action-btn-group">
             {% if voucher.is_void %}<span class="badge badge-secondary" title="{{ voucher.void_reason }}">已作废</span>{% else %}
             <a class="icon-button" href="{{ url_for('web.project_vouchers', project_id=voucher.project_id) }}" title="打开项目账套" aria-label="打开项目账套">{{ icon('preview') }}</a>

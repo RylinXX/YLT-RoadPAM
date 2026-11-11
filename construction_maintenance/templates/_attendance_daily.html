@@ -1,0 +1,23 @@
+<div class="attendance-mode" role="group" aria-label="考勤视图">
+  <button type="button" class="btn btn-secondary" id="dailyMode">按日登记</button>
+  <button type="button" class="btn btn-secondary" id="matrixMode">月度总览</button>
+</div>
+<section id="attendanceDaily" hidden aria-label="按日登记">
+  <div class="daily-toolbar">
+    <button type="button" class="btn btn-secondary" id="attendancePrev" aria-label="前一天">‹</button>
+    <label for="attendanceDate">登记日期</label>
+    <select id="attendanceDate" class="form-input">
+      {% for day in days %}<option value="{{ day.date_str }}">{{ day.date_str }} · 周{{ day.weekday }}</option>{% endfor %}
+    </select>
+    <button type="button" class="btn btn-secondary" id="attendanceNext" aria-label="后一天">›</button>
+    <label for="attendanceStatus">筛选</label>
+    <select id="attendanceStatus" class="form-input">
+      <option value="all">全部状态</option><option value="">未登记 / 休息</option>
+      <option value="上班">上班</option><option value="请假">请假</option>
+    </select>
+  </div>
+  <p id="dailySummary" class="panel-subtitle"></p>
+  <p id="attendanceSaveStatus" role="status" aria-live="polite"></p>
+  <div id="attendanceDailyCards" class="daily-cards"></div>
+</section>
+<script src="{{ url_for('static', filename='attendance.js') }}?v=1" defer></script>

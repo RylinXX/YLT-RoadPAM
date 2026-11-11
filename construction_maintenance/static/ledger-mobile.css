@@ -1,0 +1,69 @@
+.mobile-ledger-info { display: none; }
+.ledger-disclosure { margin: 0; }
+.ledger-disclosure > summary { display: none; }
+@media (max-width: 760px) {
+  .mobile-ledger-page .module-hero { gap: 10px; margin-bottom: 12px; padding-bottom: 12px; }
+  .mobile-ledger-page .module-hero-copy h1 { font-size: 21px !important; overflow-wrap: anywhere; }
+  .mobile-ledger-page .module-hero-copy p { line-height: 1.5; }
+  .mobile-ledger-page .hero-stat-card { min-width: 0; padding: 9px 12px; }
+  .mobile-ledger-page .hero-stat-sub { display: none; }
+  .mobile-ledger-page .panel-card { padding: 12px; }
+  .mobile-ledger-page .panel-header { gap: 10px; margin-bottom: 12px; }
+  .mobile-ledger-page .toolbar-actions { display: flex; gap: 8px; width: 100%; }
+  .mobile-ledger-page .toolbar-actions .btn { flex: 1; padding: 8px 10px; min-height: 44px; }
+  .mobile-ledger-page .ledger-tool { overflow: visible; }
+  .mobile-ledger-page .ledger-disclosure { margin-bottom: 12px; border: 1px solid var(--border-color); border-radius: 10px; background: var(--surface-color); }
+  .mobile-ledger-page .ledger-disclosure > summary { display: list-item; cursor: pointer; padding: 12px 14px; min-height: 46px; color: var(--text-secondary); font-weight: 600; font-size: 13px; }
+  .mobile-ledger-page .ledger-disclosure[open] > summary { border-bottom: 1px solid var(--border-color); }
+  .mobile-ledger-page .ledger-kpi-grid { padding: 10px; margin: 0 !important; gap: 8px; grid-template-columns: minmax(0, 1fr); }
+  .mobile-ledger-page .ledger-kpi-header { flex-wrap: wrap; gap: 6px; }
+  .mobile-ledger-page .ledger-kpi-header .badge { white-space: normal; overflow-wrap: anywhere; }
+  .mobile-ledger-page .ledger-filter-band { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 12px !important; margin: 0 !important; border: 0 !important; gap: 12px 8px; }
+  .mobile-ledger-page .ledger-filter-band label { font-size: 12px; }
+  .mobile-ledger-page .ledger-filter-band :is(select, input) { width: 100%; min-width: 0; min-height: 44px; font-size: 16px; }
+  .mobile-ledger-page .ledger-filter-actions { grid-column: 1 / -1; justify-content: flex-end; }
+  .mobile-ledger-page .ledger-filter-actions .icon-button { width: 44px; height: 44px; }
+  .mobile-ledger-page .mobile-records-wrap { border: 0; overflow: visible; border-radius: 0; }
+  .mobile-records-ready { display: block; width: 100% !important; min-width: 0 !important; table-layout: auto; }
+  .mobile-records-ready colgroup { display: none; }
+  .mobile-records-ready thead { position: absolute; width: 1px; height: 1px; clip-path: inset(50%); overflow: hidden; }
+  .mobile-records-ready tbody { display: grid; gap: 12px; }
+  .mobile-records-ready tbody tr { display: flex; flex-direction: column; min-width: 0; padding: 14px; border: 1px solid var(--border-color); border-radius: 12px; background: var(--surface-color); box-shadow: var(--shadow-sm); }
+  .mobile-records-ready tbody tr.is-void { opacity: .8; }
+  .mobile-records-ready tbody td { display: block; width: 100% !important; min-width: 0 !important; max-width: none !important; position: static !important; padding: 6px 0 !important; border: 0; text-align: left !important; font-size: 13px; white-space: normal !important; overflow: visible !important; text-overflow: clip !important; overflow-wrap: anywhere; }
+  .mobile-records-ready tbody td::before { content: attr(data-label); display: block; color: var(--text-tertiary); font-size: 11px; font-weight: 400; margin-bottom: 3px; }
+  .mobile-records-ready tbody td :is(span, div, a, small) { max-width: 100% !important; white-space: normal !important; overflow-wrap: anywhere; text-overflow: clip !important; }
+  .mobile-records-ready .tooltip-cell::after { display: none !important; }
+  .mobile-records-ready tbody .tooltip-cell[data-tooltip]:hover::before { content: attr(data-label); position: static; width: auto; height: auto; transform: none; border: 0; background: none; opacity: 1; pointer-events: none; }
+  .mobile-records-ready .mobile-record-title { order: -3; font-size: 16px; font-weight: 650; line-height: 1.6; }
+  .mobile-records-ready .mobile-record-title::before { display: none; }
+  .mobile-records-ready .mobile-record-amount { order: -2; font-size: 24px !important; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .mobile-records-ready .mobile-record-handler > div + div { display: none !important; }
+  .mobile-records-ready .mobile-record-actions { margin-top: 6px; border-top: 1px solid var(--border-color); padding-top: 12px !important; }
+  .mobile-records-ready .mobile-record-actions::before { display: none; }
+  .mobile-record-actions > div:not(.mobile-ledger-info) { display: flex !important; flex-wrap: wrap; justify-content: flex-start !important; gap: 8px !important; width: 100%; }
+  .mobile-record-actions :is(.icon-button, .btn-action-edit, .btn-action-preview) { display: inline-flex; align-items: center; justify-content: center; gap: 5px; width: auto !important; min-width: 44px !important; height: auto !important; min-height: 44px !important; padding: 8px 10px !important; border: 1px solid var(--border-color); border-radius: 8px; font-size: 12px; }
+  .mobile-record-actions .icon-button::after { content: attr(aria-label); }
+  .mobile-record-actions .icon-button[aria-label="作废明细"] { color: var(--danger-text); }
+  .mobile-ledger-info { display: block; margin-bottom: 10px; }
+  .mobile-ledger-statuses { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+  .mobile-ledger-details summary { min-height: 44px; padding: 10px 0; font-size: 12px; color: var(--primary-color); cursor: pointer; }
+  .mobile-ledger-details dl { margin: 0 0 12px; padding: 12px; background: var(--surface-muted); border-radius: 8px; }
+  .mobile-ledger-details dt { color: var(--text-tertiary); font-size: 11px; margin-top: 6px; }
+  .mobile-ledger-details dd { margin: 2px 0 8px; font-size: 13px; overflow-wrap: anywhere; }
+  .mobile-records-ready tr.empty-row td::before { display: none; }
+  .mobile-records-ready .empty-state { padding: 24px 0; }
+  .mobile-ledger-page .pagination-container { flex-direction: column; align-items: stretch; }
+  .mobile-ledger-page .pagination-buttons { display: flex; width: 100%; gap: 8px; }
+  .mobile-ledger-page .pagination-buttons .pagination-btn { flex: 1; min-height: 44px; }
+  .mobile-ledger-page .modal { padding: 0; align-items: flex-end; }
+  .mobile-ledger-page .modal-content { max-width: none; width: 100% !important; max-height: 94vh; max-height: 94dvh; border-radius: 16px 16px 0 0; overflow: hidden; }
+  .mobile-ledger-page .modal-header { flex-shrink: 0; padding: 14px 16px; }
+  .mobile-ledger-page .modal-title { font-size: 17px; }
+  .mobile-ledger-page .modal-close { min-width: 44px; min-height: 44px; }
+  .mobile-ledger-page .modal-body { overflow-y: auto; overscroll-behavior: contain; padding: 16px; min-height: 0; }
+  .mobile-ledger-page .modal .form-grid { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .mobile-ledger-page .modal :is(input,select,textarea) { min-width: 0; max-width: 100%; font-size: 16px; min-height: 46px; }
+  .mobile-ledger-page .modal .form-actions { position: sticky; bottom: -16px; padding: 12px 0 max(12px, env(safe-area-inset-bottom)); background: var(--surface-elevated); display: flex; gap: 10px; z-index: 2; }
+  .mobile-ledger-page .modal .form-actions .btn { flex: 1; min-height: 46px; }
+}

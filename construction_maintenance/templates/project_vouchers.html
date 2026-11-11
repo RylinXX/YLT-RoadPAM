@@ -89,6 +89,7 @@
     <div class="toolbar-actions">
       <a class="btn btn-secondary toolbar-btn" href="{{ url_for('web.expense_categories') }}">{{ icon('checklist') }} 分类管理</a>
       <a class="btn btn-secondary toolbar-btn" href="{{ ledger_export_url }}">{{ icon('export') }} 导出</a>
+      <button type="button" class="btn btn-primary toolbar-btn" onclick="openModal('addVoucherModal')">{{ icon('add') }} 录入明细</button>
     </div>
   </div>
 
@@ -137,7 +138,7 @@
   </form>
 
   <div class="table-container ledger-table-wrap">
-    <table class="premium-table ledger-table">
+    <table class="premium-table ledger-table" data-mobile-records="project">
       <colgroup>
         <col class="col-date">
         <col class="col-category">
@@ -184,6 +185,7 @@
             </div>
           </td>
           <td class="text-center ledger-row-actions sticky-col-right">
+            {% include '_ledger_mobile_details.html' %}
             <div class="action-btn-group">
             {% if voucher.is_void %}<span class="badge badge-secondary" title="{{ voucher.void_reason }}">已作废</span>{% else %}
             <button type="button" class="icon-button" title="编辑明细" aria-label="编辑明细"

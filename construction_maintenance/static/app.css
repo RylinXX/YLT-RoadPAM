@@ -4812,3 +4812,18 @@ html.dark-theme .login-alert {
     white-space: normal;
   }
 }
+.mobile-menu-toggle { display: none; }
+.attendance-mode, .daily-toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.daily-toolbar .form-input { width: auto; margin: 0; min-height: 44px; }
+.attendance-mode [aria-pressed="true"], .daily-person-actions [aria-pressed="true"] { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
+.attendance-pagination-hidden { display: none !important; }
+#attendanceDaily[hidden], #attendanceMatrix[hidden] { display: none; }
+.daily-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+.daily-person { padding: 16px; border: 1px solid var(--border-color); border-radius: 12px; background: var(--surface-color); }
+.daily-person h3 { margin: 0 0 6px; font-size: 17px; }
+.daily-person p { color: var(--text-secondary); font-size: 13px; margin: 0 0 14px; }
+.daily-person-actions { display: flex; gap: 6px; }
+.daily-person-actions .btn { flex: 1; min-height: 44px; padding: 8px; }
+#attendanceSaveStatus { min-height: 24px; color: var(--primary-color); font-size: 14px; }
+.daily-empty { padding: 24px 12px; color: var(--text-secondary); }
+.attendance-cell:focus-visible { outline: 3px solid var(--primary-color); outline-offset: -3px; }

@@ -11,7 +11,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.9/dist/chart.umd.min.js"></script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}?v=2.8.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}?v=2.9.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='mobile.css') }}?v=1">
+    <link rel="stylesheet" href="{{ url_for('static', filename='workbench.css') }}?v=1">
+    {% if request.endpoint in ['web.projects', 'web.vouchers', 'web.project_vouchers'] %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='ledger-mobile.css') }}?v=1">
+    <script src="{{ url_for('static', filename='ledger-mobile.js') }}?v=1" defer></script>
+    {% endif %}
     <script>
       (function() {
         const theme = localStorage.getItem('theme') || 'light';
@@ -29,11 +35,14 @@
             <img src="{{ url_for('static', filename='brand/ylt-mark.png') }}?v=2.1.11" alt="">
           </div>
           <div class="brand-copy">
-            <div class="brand-name">营力特项目系统</div>
+            <div class="brand-name">营力特路养</div>
+            <div class="brand-caption">工程运营管理平台</div>
           </div>
         </div>
 
-        <nav class="nav-menu" aria-label="主导航">
+        <button type="button" class="mobile-menu-toggle" aria-controls="mainNavigation" aria-expanded="false" onclick="const expanded = this.getAttribute('aria-expanded') !== 'true'; this.setAttribute('aria-expanded', String(expanded)); document.getElementById('mainNavigation').classList.toggle('mobile-open', expanded);">{{ icon('list-view') }} 功能导航</button>
+        <nav class="nav-menu" id="mainNavigation" aria-label="主导航">
+          <span class="nav-section-label">工作空间</span>
           <a href="{{ url_for('web.dashboard') }}" class="nav-item {% if request.endpoint == 'web.dashboard' %}active{% endif %}">
             <span class="nav-icon" aria-hidden="true">{{ icon('dashboard') }}</span>
             <span class="nav-label">数据看板</span>
@@ -45,11 +54,11 @@
           <!-- 3. 账套管理中心 (可点击标题自由折叠/展开) -->
           {% set is_financial_active = request.endpoint in ['web.vouchers', 'web.edit_voucher', 'web.void_voucher', 'web.ledger_pending', 'web.complete_ledger_pending', 'web.ignore_ledger_pending', 'web.expense_categories', 'web.edit_expense_category', 'web.migrate_expense_category'] %}
           <div class="nav-group {% if is_financial_active %}active{% else %}collapsed{% endif %}">
-            <div class="nav-item {% if is_financial_active %}active{% endif %}" style="cursor: pointer; user-select: none;" onclick="toggleNavGroup(this)">
+            <button type="button" class="nav-item nav-group-toggle {% if is_financial_active %}active{% endif %}" aria-expanded="{{ 'true' if is_financial_active else 'false' }}" aria-controls="financeNavigation" onclick="toggleNavGroup(this)">
               <span class="nav-icon" aria-hidden="true">{{ icon('receipt') }}</span>
-              <span class="nav-label">账套管理中心</span>
-            </div>
-            <div class="nav-submenu" style="display: {% if is_financial_active %}flex{% else %}none{% endif %};">
+              <span class="nav-label">费用与账套</span><span class="nav-chevron" aria-hidden="true"></span>
+            </button>
+            <div class="nav-submenu" id="financeNavigation" style="display: {% if is_financial_active %}flex{% else %}none{% endif %};">
               <a href="{{ url_for('web.vouchers') }}" class="nav-subitem {% if request.endpoint in ['web.vouchers', 'web.edit_voucher', 'web.void_voucher'] %}active{% endif %}">
                 <span class="nav-subdot"></span> 全盘明细
               </a>
@@ -63,13 +72,13 @@
           </div>
 
           <!-- 4. 公司人员档案管理 (可点击标题自由折叠/展开) -->
-          {% set is_people_active = (request.endpoint == 'web.people') %}
+          {% set is_people_active = request.endpoint in ['web.people', 'web.attendance'] %}
           <div class="nav-group {% if is_people_active %}active{% else %}collapsed{% endif %}">
-            <div class="nav-item {% if is_people_active %}active{% endif %}" style="cursor: pointer; user-select: none;" onclick="toggleNavGroup(this)">
+            <button type="button" class="nav-item nav-group-toggle {% if is_people_active %}active{% endif %}" aria-expanded="{{ 'true' if is_people_active else 'false' }}" aria-controls="peopleNavigation" onclick="toggleNavGroup(this)">
               <span class="nav-icon" aria-hidden="true">{{ icon('people') }}</span>
-              <span class="nav-label">公司人员档案管理</span>
-            </div>
-            <div class="nav-submenu" style="display: {% if is_people_active %}flex{% else %}none{% endif %};">
+              <span class="nav-label">人员与考勤</span><span class="nav-chevron" aria-hidden="true"></span>
+            </button>
+            <div class="nav-submenu" id="peopleNavigation" style="display: {% if is_people_active %}flex{% else %}none{% endif %};">
               <a href="{{ url_for('web.people', tab='roster') }}" class="nav-subitem {% if is_people_active and (not active_tab or active_tab in ['roster', 'people']) %}active{% endif %}">
                 <span class="nav-subdot"></span> 花名册
               </a>
@@ -82,6 +91,7 @@
             </div>
           </div>
 
+          <span class="nav-section-label">业务管理</span>
           <a href="{{ url_for('web.qualifications') }}" class="nav-item {% if request.endpoint == 'web.qualifications' %}active{% endif %}">
             <span class="nav-icon" aria-hidden="true">{{ icon('qualification') }}</span>
             <span class="nav-label">企业资质</span>
@@ -329,6 +339,7 @@
         if (!submenu) return;
         
         const isHidden = window.getComputedStyle(submenu).display === 'none';
+        navItemEl.setAttribute('aria-expanded', String(isHidden));
         if (isHidden) {
           submenu.style.display = 'flex';
           group.classList.remove('collapsed');

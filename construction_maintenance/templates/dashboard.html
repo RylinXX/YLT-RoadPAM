@@ -9,9 +9,13 @@
 <!-- Top Integrated Hero Section with All 6 Core Metric Stats -->
 <section class="dashboard-hero animate-slide-up">
   <div class="dashboard-hero-copy">
-    <span class="eyebrow">YLT Digital Operations</span>
-    <h1>营力特数字化系统</h1>
-    <p>工程项目独立账套管理、费用分类占比分析与运营风险预警中心。</p>
+    <span class="eyebrow">运营工作台</span>
+    <h1>经营概览</h1>
+    <p>项目收支、人员考勤与待办事项，一处掌握。</p>
+  </div>
+  <div class="dashboard-quick-actions" aria-label="常用操作">
+    <a class="btn btn-secondary" href="{{ url_for('web.projects') }}">{{ icon('folder') }} 项目台账</a>
+    <a class="btn btn-primary" href="{{ url_for('web.people', tab='attendance') }}">{{ icon('checklist') }} 登记考勤</a>
   </div>
   <div class="dashboard-hero-panel">
     <div>
@@ -22,7 +26,7 @@
     <div>
       <span class="hero-stat-title">累计项目净支出</span>
       <strong class="hero-stat-val">¥{{ metrics.net_expense|money_short }}</strong>
-      <span class="hero-stat-sub">覆盖 6 大台账</span>
+      <span class="hero-stat-sub">所有项目累计</span>
     </div>
     <div>
       <span class="hero-stat-title">累计收入</span>
@@ -86,7 +90,7 @@
   <div class="panel-card">
     <div class="panel-header" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
       <div>
-        <h2 class="panel-title">{{ icon('checklist') }} 支出分类占比 (饼图)</h2>
+        <h2 class="panel-title">{{ icon('checklist') }} 支出分类占比</h2>
         <p class="panel-subtitle">可选择单项目或全盘对比各类支出比例</p>
       </div>
       <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">

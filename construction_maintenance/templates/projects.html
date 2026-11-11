@@ -17,9 +17,9 @@
       <span class="hero-stat-sub">一项目一台账</span>
     </div>
     <div class="hero-stat-card">
-      <span class="hero-stat-title">全盘累计净支出</span>
-      <strong class="hero-stat-val">¥1,162.57万</strong>
-      <span class="hero-stat-sub">多项目精细对账</span>
+      <span class="hero-stat-title">进行中项目</span>
+      <strong class="hero-stat-val">{{ projects|selectattr('status', 'equalto', '进行中')|list|length }} <small>个</small></strong>
+      <span class="hero-stat-sub">按实际项目状态统计</span>
     </div>
   </div>
 </section>
@@ -39,7 +39,7 @@
     </div>
     
     <div class="table-container">
-      <table class="premium-table" style="table-layout: fixed; width: 100%;">
+      <table class="premium-table" data-mobile-records="projects" style="table-layout: fixed; width: 100%;">
         <thead>
           <tr>
             <th style="width: 22%;">项目名称</th>

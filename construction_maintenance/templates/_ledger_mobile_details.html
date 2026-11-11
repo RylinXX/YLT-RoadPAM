@@ -1,0 +1,17 @@
+<div class="mobile-ledger-info">
+  <div class="mobile-ledger-statuses">
+    <span class="badge">{{ voucher.transaction_type }}</span>
+    <span class="badge {{ 'badge-warning' if voucher.payment_status in ['未支付', '支付状态待确认'] else 'badge-secondary' }}">{{ voucher.payment_status }}</span>
+    <span class="badge {{ 'badge-warning' if voucher.review_status == '待复核' else 'badge-success' }}">{{ voucher.review_status }}</span>
+  </div>
+  <details class="mobile-ledger-details">
+    <summary>查看付款与来源</summary>
+    <dl>
+      <dt>付款日期</dt><dd>{{ voucher.payment_date or '未填写' }}</dd>
+      <dt>付款说明</dt><dd>{{ voucher.payment_notes or '未填写' }}</dd>
+      <dt>来源文件</dt><dd>{{ voucher.source_filename or '系统录入' }}</dd>
+      {% if voucher.source_sheet %}<dt>来源位置</dt><dd>{{ voucher.source_sheet }}{% if voucher.source_row %} · 第 {{ voucher.source_row }} 行{% endif %}</dd>{% endif %}
+      {% if voucher.is_void %}<dt>作废原因</dt><dd>{{ voucher.void_reason or '未填写' }}</dd>{% endif %}
+    </dl>
+  </details>
+</div>

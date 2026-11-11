@@ -1,0 +1,43 @@
+/* Keep wide business tables inside their panels, not the page viewport. */
+@media (max-width: 760px) {
+  .app-container, .main-content, .content-body, .panel-section, .panel-card { min-width: 0; max-width: 100%; }
+  .sidebar { position: relative; padding: 10px 12px; }
+  .sidebar .brand-lockup { min-height: 42px; padding: 0 130px 0 0; }
+  .sidebar .brand-name { font-size: 15px; white-space: normal; }
+  .mobile-menu-toggle { display: block; position: absolute; top: 12px; right: 12px; min-height: 44px; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--surface-color); color: var(--text-primary); font: inherit; }
+  .sidebar .nav-menu { display: none; }
+  .sidebar .nav-menu.mobile-open { display: flex; flex-direction: column; overflow: visible; padding: 12px 0; }
+  .sidebar .nav-menu .nav-item, .sidebar .nav-subitem { min-height: 44px; width: 100%; }
+  .sidebar .nav-submenu { flex-direction: column; padding-left: 20px; }
+  .sidebar .nav-label { display: inline; }
+  .main-header { height: auto; min-height: 58px; }
+  .app-header { min-height: 58px; gap: 8px; }
+  .page-title-group { min-width: 0; }
+  .page-title-group h2 { font-size: 15px; overflow-wrap: anywhere; }
+  .page-title-group span, .user-profile-copy { display: none; }
+  .header-actions { gap: 8px; flex-shrink: 0; }
+  .content-body { padding: 14px 12px calc(24px + env(safe-area-inset-bottom)); }
+  .module-hero { padding: 18px; gap: 16px; }
+  .module-hero-copy h1 { font-size: 24px; }
+  .module-hero-copy p { font-size: 13px; }
+  .toolbar-actions { max-width: 100%; flex-wrap: wrap; margin-left: 0 !important; }
+  .table-container, .attendance-table-container { max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; }
+  #mainTabContentAttendance > .view-switcher { width: 100% !important; overflow-x: auto; }
+  #mainTabContentAttendance > .view-switcher .view-btn { flex: 0 0 auto; white-space: nowrap; }
+  #mainTabContentAttendance .panel-card { padding: 16px !important; }
+  #attendanceTabContent .toolbar-actions { display: flex; flex-direction: column; align-items: stretch; }
+  #attendanceTabContent .attendance-legend { flex-wrap: wrap; margin: 0 0 12px !important; }
+  .daily-cards { grid-template-columns: minmax(0, 1fr); }
+  .daily-toolbar { gap: 6px; }
+  .daily-toolbar label[for="attendanceDate"] { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  #attendanceDate { flex: 1; min-width: 0; }
+  .daily-toolbar .btn { min-height: 44px; min-width: 44px; }
+  #attendanceStatus { flex: 1; }
+  .daily-toolbar label[for="attendanceStatus"] { flex-basis: 35%; }
+  input, select, textarea, .form-input, .search-input { font-size: 16px; }
+  .btn, .view-btn { min-height: 44px; }
+  .modal { padding: 8px; }
+  .modal .modal-content { width: 100% !important; max-height: calc(100dvh - 16px); }
+  .modal .form-grid { grid-template-columns: minmax(0, 1fr); }
+  .modal-footer { flex-wrap: wrap; padding-bottom: max(16px, env(safe-area-inset-bottom)); }
+}

@@ -20,8 +20,8 @@
     {% if active_tab == 'attendance' %}
     <div class="hero-stat-card">
       <span class="hero-stat-title">考勤总人数</span>
-      <strong class="hero-stat-val">{{ attendance_people|length if attendance_people else people|length }} <small style="font-size: 11px;">人</small></strong>
-      <span class="hero-stat-sub">当前月份: {{ current_month or '当月' }}</span>
+      <strong class="hero-stat-val">{{ attendance_people|length }} <small style="font-size: 11px;">人</small></strong>
+      <span class="hero-stat-sub">当前月份: {{ month }}</span>
     </div>
     {% else %}
     <div class="hero-stat-card">
@@ -411,7 +411,7 @@
       <div class="panel-header" style="flex-wrap: wrap; gap: 16px; align-items: center;">
         <div>
           <h2 class="panel-title">{{ icon('checklist') }} 施工人员月度考勤表</h2>
-          <p class="panel-subtitle">当前大表共装载了 <strong style="color: var(--primary-color);">{{ attendance_people|length }}</strong> 名考勤人员。点击单元格在【无】→【上班】→【请假】之间循环切换，横向滑动查看完整日期。</p>
+          <p class="panel-subtitle">共 {{ attendance_people|length }} 名人员。按日登记可直接选择状态；月度总览可点击格子切换。空白表示未登记 / 休息。</p>
         </div>
         <div class="toolbar-actions" style="margin-left: auto;">
           <!-- HSL Custom Styled Legend -->
@@ -457,8 +457,9 @@
         <input type="text" id="attendanceSearch" class="search-input" oninput="filterAttendanceModule('attendanceSearch')" placeholder="输入人员姓名或工种岗位进行快速检索（考勤表及工资结算表均会同步过滤）...">
       </div>
 
+      {% include '_attendance_daily.html' %}
       <!-- Attendance Grid Table Container -->
-      <div class="attendance-table-container">
+      <div class="attendance-table-container" id="attendanceMatrix">
         <table class="attendance-table">
           <thead>
             <tr>
@@ -494,6 +495,8 @@
                 <td class="attendance-cell {% if shift in ('白班', '夜班', '上班') %}cell-day{% elif shift == '请假' %}cell-leave{% else %}cell-none{% endif %} {% if day.is_weekend %}weekend-cell{% endif %}" 
                     data-date="{{ day.date_str }}" 
                     data-shift="{{ shift or '' }}" 
+                    tabindex="0" role="button" aria-label="{{ person.name }} {{ day.date_str }} {{ shift or '未登记 / 休息' }}"
+                    onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }"
                     onclick="toggleAttendanceCell(this, {{ person.id }}, '{{ day.date_str }}')">
                   {% if shift in ('白班', '夜班', '上班') %}{% elif shift == '请假' %}假{% endif %}
                 </td>
@@ -1983,6 +1986,7 @@ function togglePeopleView(view) {
   const listView = document.getElementById('peopleListView');
   const btnGrid = document.getElementById('viewBtnGrid');
   const btnList = document.getElementById('viewBtnList');
+  if (!btnGrid || !btnList) return;
   
   if (view === 'grid') {
     if (gridArea) gridArea.style.display = 'block';
@@ -2090,6 +2094,15 @@ function switchMainTab(tab) {
 
 // 人员考勤与结算 视角统一切换逻辑（考勤表 / 长期员工工资结算 / 日结工人工资结算）
 function switchAttendanceView(view) {
+  if (view !== 'attendance' && document.querySelector('.cell-loading')) {
+    alert('正在保存考勤，请稍候再查看结算。');
+    return;
+  }
+  if (view !== 'attendance' && window.attendanceSalaryDirty) {
+    localStorage.setItem('attendance_active_sub_tab', view);
+    window.location.reload();
+    return;
+  }
   const attTab = document.getElementById('attendanceTabContent');
   const salaryContainer = document.getElementById('salaryTabContent');
   const cardLong = document.getElementById('salaryLongCard');
@@ -2207,7 +2220,7 @@ function changeMonth(val) {
   window.location.href = url.pathname + url.search;
 }
 
-function toggleAttendanceCell(cell, personId, dateStr) {
+function toggleAttendanceCell(cell, personId, dateStr, explicitShift) {
   if (cell.classList.contains('cell-loading')) return;
 
   const currentShift = cell.getAttribute('data-shift') || '';
@@ -2220,11 +2233,13 @@ function toggleAttendanceCell(cell, personId, dateStr) {
   } else if (currentShift === '请假') {
     nextShift = '';
   }
+  if (explicitShift !== undefined) nextShift = explicitShift;
+  if (nextShift === currentShift) return Promise.resolve();
 
   cell.classList.add('cell-loading');
   cell.innerText = '...';
 
-  fetch("{{ url_for('web.update_attendance') }}", {
+  return fetch("{{ url_for('web.update_attendance') }}", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -2242,6 +2257,8 @@ function toggleAttendanceCell(cell, personId, dateStr) {
       const prevShift = cell.getAttribute('data-shift') || '';
       
       cell.setAttribute('data-shift', nextShift);
+      cell.setAttribute('aria-label', `${cell.closest('tr').querySelector('.p-name').textContent} ${dateStr} ${nextShift || '未登记 / 休息'}`);
+      window.attendanceSalaryDirty = true;
       cell.className = `attendance-cell ${nextShift === '上班' ? 'cell-day' : (nextShift === '请假' ? 'cell-leave' : 'cell-none')} ${cell.classList.contains('weekend-cell') ? 'weekend-cell' : ''}`;
       cell.innerText = nextShift === '上班' ? '' : (nextShift === '请假' ? '假' : '');
       
@@ -2255,7 +2272,7 @@ function toggleAttendanceCell(cell, personId, dateStr) {
   .catch(error => {
     cell.classList.remove('cell-loading');
     cell.innerText = (currentShift === '白班' || currentShift === '夜班' || currentShift === '上班') ? '' : (currentShift === '请假' ? '假' : '');
-    alert("网络通信异常，考勤未能同步保存，请刷新后重试。");
+    alert("考勤未保存：" + error.message + "。请重试；如登录已过期，请重新登录。");
     console.error(error);
   });
 }
@@ -2408,11 +2425,16 @@ function updateQuotaHelper() {
 
 // 一键自动填报全员工作日考勤
 function batchFillAttendance() {
+  if (window.attendanceBatchSaving || document.querySelector('.cell-loading')) {
+    alert('正在保存考勤，请稍候再批量填报。');
+    return;
+  }
   const month = document.getElementById('monthSelect').value;
-  if (!confirm(`您确定要一键将 ${month} 月份所有考勤人员的【工作日（周一至周五）】自动填报为「上班」吗？\n（注：这会覆盖已有的冲突打卡，但不会填报周六和周日）`)) {
+  if (!confirm(`将 ${month} 所有考勤人员的空白工作日（周一至周五）补为「上班」？\n已有上班、请假记录将保留，不填报周末。此操作用于整月补录，请确认月份。`)) {
     return;
   }
   
+  window.attendanceBatchSaving = true;
   fetch("/attendance/batch-fill", {
     method: "POST",
     headers: {
@@ -2431,7 +2453,8 @@ function batchFillAttendance() {
   .catch(error => {
     alert("批量填报失败: " + (error.message || "网络请求失败。"));
     console.error(error);
-  });
+  })
+  .finally(() => { window.attendanceBatchSaving = false; });
 }
 
 // 删除流水

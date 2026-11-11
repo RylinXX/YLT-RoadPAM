@@ -1127,6 +1127,8 @@ def delete_salary_payment(payment_id):
 @bp.post("/attendance/update")
 def update_attendance():
     data = request.get_json() or {}
+    if not isinstance(data, dict):
+        return {"status": "error", "message": "考勤参数无效"}, 400
     person_id = data.get("person_id")
     date = data.get("date")
     shift_type = data.get("shift_type")
@@ -1137,6 +1139,9 @@ def update_attendance():
     try:
         person_id = int(person_id)
         work_date = _parse_iso_date(date, "考勤日期")
+        person = repo.get_db().execute("select is_attendance from people where id = ?", (person_id,)).fetchone()
+        if person is None or not person["is_attendance"]:
+            raise ValueError("人员不存在或未参与考勤，请刷新名单")
         if shift_type not in (None, "", "上班", "请假", "白班", "夜班"):
             raise ValueError("考勤状态无效")
         if shift_type in ("白班", "夜班"):
@@ -1173,6 +1178,8 @@ def update_attendance_settings():
 @bp.post("/attendance/batch-fill")
 def batch_fill_attendance():
     data = request.get_json() or {}
+    if not isinstance(data, dict):
+        return {"status": "error", "message": "考勤参数无效"}, 400
     month = data.get("month")
     shift_type = data.get("shift_type", "上班")
     
@@ -1190,6 +1197,7 @@ def batch_fill_attendance():
         _, num_days = calendar.monthrange(year, m)
         
         db = repo.get_db()
+        inserted = 0
         # 批量填报考勤
         for p in people:
             for d in range(1, num_days + 1):
@@ -1200,16 +1208,17 @@ def batch_fill_attendance():
                 if dt.weekday() in [5, 6]:
                     continue
                 
-                db.execute(
+                result = db.execute(
                     """
                     insert into attendance (person_id, work_date, shift_type)
                     values (?, ?, ?)
-                    on conflict(person_id, work_date) do update set shift_type = excluded.shift_type
+                    on conflict(person_id, work_date) do nothing
                     """,
                     (p["id"], date_str, shift_type),
                 )
+                inserted += result.rowcount
         db.commit()
-        return {"status": "success"}
+        return {"status": "success", "inserted": inserted}
     except (TypeError, ValueError, sqlite3.IntegrityError) as exc:
         return {"status": "error", "message": str(exc)}, 400
 

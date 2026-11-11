@@ -1,8 +1,47 @@
 from __future__ import annotations
 
 import json
+import pytest
 from construction_maintenance.db import get_db
 from construction_maintenance import repositories as repo
+
+
+def test_batch_fill_preserves_existing_records_and_is_idempotent(client, app):
+    with app.app_context():
+        person = repo.create_person({"name": "补录测试", "id_number": "410000199001011111"})
+        excluded = repo.create_person({"name": "不考勤", "is_attendance": 0, "id_number": "410000199001012222"})
+        repo.save_attendance(person, "2026-06-01", "请假")
+        repo.save_attendance(person, "2026-06-06", "上班")
+    result = client.post('/attendance/batch-fill', json={"month": "2026-06"})
+    assert result.status_code == 200
+    assert result.json['inserted'] == 21
+    assert client.post('/attendance/batch-fill', json={"month": "2026-06"}).json['inserted'] == 0
+    with app.app_context():
+        records = repo.list_attendance_by_month('2026-06')
+        assert len(records) == 23
+        assert not any(r['person_id'] == excluded for r in records)
+        assert next(r for r in records if r['work_date'] == '2026-06-01')['shift_type'] == '请假'
+        assert not any(r['work_date'] == '2026-06-07' for r in records)
+
+
+@pytest.mark.parametrize('person_id', [999999, 0])
+def test_update_rejects_missing_person_even_when_clearing(client, person_id):
+    assert client.post('/attendance/update', json={
+        'person_id': person_id, 'date': '2026-06-01', 'shift_type': None,
+    }).status_code == 400
+
+
+def test_update_rejects_excluded_person(client, app):
+    with app.app_context():
+        person = repo.create_person({'name': '不考勤', 'is_attendance': 0, 'id_number': '410000199001013333'})
+    assert client.post('/attendance/update', json={
+        'person_id': person, 'date': '2026-06-01', 'shift_type': '上班',
+    }).status_code == 400
+
+
+@pytest.mark.parametrize('endpoint', ['/attendance/update', '/attendance/batch-fill'])
+def test_attendance_rejects_non_object_payload(client, endpoint):
+    assert client.post(endpoint, json=['invalid']).status_code == 400
 
 
 def test_attendance_page_renders(client):
